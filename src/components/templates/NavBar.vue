@@ -1,3 +1,16 @@
+<script setup lang="ts">
+import CreateNoteModal from '../organisms/CreateNoteModal.vue';
+import AppIcon from '../atoms/AppIcon.vue';
+import CreateNoteIcon from '../atoms/CreateNoteIcon.vue';
+import { ref } from 'vue';
+
+const modal = ref();
+
+const openCreateNoteModal = () => {
+  modal.value.toggleCreateNoteModal();
+};
+</script>
+
 <template>
   <header class="sticky top-0 bg-todo-black shadow-lg">
     <nav
@@ -13,32 +26,16 @@
       <div class="flex items-center flex-1 justify-end">
         <div
           class="flex gap-3 px-6 py-1 hover:text-black hover:bg-stone-100 duration-150 rounded-full cursor-pointer"
-          @click="toggleCreateModal"
+          @click="openCreateNoteModal()"
         >
           <CreateNoteIcon />
           <p class="text-xl">Create note</p>
         </div>
       </div>
 
-      <CreateNoteModal
-        :is-modal-active="createModalActive"
-        @cancel-creating="toggleCreateModal"
-        @submit-creating="toggleCreateModal"
-      ></CreateNoteModal>
+      <CreateNoteModal ref="modal" />
     </nav>
   </header>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-import CreateNoteModal from '../organisms/CreateNoteModal.vue';
-import AppIcon from '../atoms/AppIcon.vue';
-import CreateNoteIcon from '../atoms/CreateNoteIcon.vue';
-
-const createModalActive = ref(false);
-const toggleCreateModal = () => {
-  createModalActive.value = !createModalActive.value;
-};
-</script>
 
 <style scoped></style>

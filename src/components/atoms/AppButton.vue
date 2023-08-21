@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <button
-    class="text-black bg-white hover:text-white hover:bg-todo-black duration-150 rounded-full"
+    class="text-black hover:text-white hover:bg-todo-black duration-150 rounded-full"
   >
     {{ text }}
     <component :is="icon" v-if="icon" />

@@ -1,3 +1,26 @@
+<script setup lang="ts">
+import { deleteID, notes } from '../../stores/notes';
+import { onMounted, ref } from 'vue';
+import AppButton from '../atoms/AppButton.vue';
+import DeleteNoteModal from '../organisms/DeleteNoteModal.vue';
+import NoteItemLabel from '../atoms/NoteItemLabel.vue';
+import NoteItemCheckbox from '../atoms/NoteItemCheckbox.vue';
+
+const modal = ref();
+
+const openDeleteNoteModal = (id: number) => {
+  deleteID.value = id;
+  modal.value.toggleDeleteNoteModal();
+};
+
+onMounted(() => {
+  let ls = localStorage.getItem('notes');
+  if (ls != null) {
+    notes.value = JSON.parse(ls) || [];
+  }
+});
+</script>
+
 <template>
   <div
     v-if="notes.length === 0"
@@ -16,50 +39,29 @@
             <AppButton
               class="py-0.5 px-2"
               text="✕"
-              @click="toggleDeleteModal(note.id)"
+              @click="openDeleteNoteModal(note.id)"
             />
           </div>
         </div>
         <div
-          v-for="(todo, j) in note.todoList"
+          v-for="(todo, j) in note.todos"
           :key="todo.id"
           class="flex items-center"
         >
-          <div v-if="j < 2">
-            <div v-if="todo.done" class="flex items-center">
-              <input
-                id="green-checkbox"
-                disabled
-                checked
-                type="checkbox"
-                class="w-4 h-4 accent-green-600 rounded"
-              />
-              <label
-                for="green-checkbox"
-                class="w-64 px-4 py-1 rounded-lg text-sm font-medium text-green-600"
-              >
-                {{ todo.name }}
-              </label>
-            </div>
-            <div v-else class="flex items-center">
-              <input
-                id="red-checkbox"
-                disabled
-                type="checkbox"
-                class="w-4 h-4 rounded"
-              />
-              <label
-                for="red-checkbox"
-                class="w-64 px-4 py-1 rounded-lg text-sm"
-              >
-                {{ todo.name }}
-              </label>
-            </div>
+          <div v-if="j < 2" class="flex items-center">
+            <NoteItemCheckbox v-model:done="todo.done" disabled />
+            <NoteItemLabel
+              v-if="todo.done"
+              :name="todo.name"
+              for="checkbox"
+              class="font-medium text-green-600"
+            />
+            <NoteItemLabel v-else :name="todo.name" for="checkbox" />
           </div>
         </div>
         <div class="flex items-center">
-          <div v-if="note.todoList.length > 2" class="pl-4 text-sm">
-            and {{ note.todoList.length - 2 }} more todo(s)
+          <div v-if="note.todos.length > 2" class="pl-4 text-sm">
+            and {{ note.todos.length - 2 }} more todo(s)
           </div>
           <div class="flex flex-1 justify-end">
             <RouterLink
@@ -77,32 +79,8 @@
         </div>
       </div>
     </div>
+    <DeleteNoteModal ref="modal" />
   </div>
-  <DeleteModal
-    :modal-active="deleteModalActive"
-    @cancel-deleting="toggleDeleteModal"
-    @submit-deleting="toggleDeleteModal"
-  >
-  </DeleteModal>
 </template>
 
-<script setup lang="ts">
-import { notes, delete_id } from '../../stores/notes';
-import { onMounted, ref } from 'vue';
-import DeleteModal from '../organisms/DeleteModal.vue';
-import AppButton from '../atoms/AppButton.vue';
-
-const deleteModalActive = ref(false);
-
-const toggleDeleteModal = (id: number) => {
-  deleteModalActive.value = !deleteModalActive.value;
-  delete_id.value = id;
-};
-
-onMounted(() => {
-  let ls = localStorage.getItem('notes');
-  if (ls != null) {
-    notes.value = JSON.parse(ls) || [];
-  }
-});
-</script>
+<style scoped></style>

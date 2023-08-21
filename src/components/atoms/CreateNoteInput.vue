@@ -13,7 +13,10 @@ defineEmits(['update:inputValue']);
     type="text"
     :placeholder="placeholder"
     :value="inputValue"
-    @input="$emit('update:inputValue', $event.target.value)"
+    required
+    @input="
+      $emit('update:inputValue', ($event.target as HTMLInputElement).value)
+    "
   />
 </template>
 
